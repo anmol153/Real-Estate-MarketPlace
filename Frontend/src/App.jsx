@@ -1,14 +1,20 @@
-import { useState } from 'react'
-import './App.css'
+import {createBrowserRouter,createRoutesFromElements,Route,RouterProvider,} from "react-router-dom";
+import { Home, SignIn, SignUp, About, Profile } from "./pages/index.jsx";
 
-function App() {
-  return (
+const router = createBrowserRouter(
+  createRoutesFromElements(
     <>
-      <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
-      </>
+      <Route path="/" element={<Home />} />
+      <Route path="/sign-in" element={<SignIn />} />
+      <Route path="/sign-up" element={<SignUp />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/profile" element={<Profile />} />
+    </>
   )
-}
+);
 
-export default App
+const App = () => {
+  return <RouterProvider router={router} />;
+};
+
+export default App;
