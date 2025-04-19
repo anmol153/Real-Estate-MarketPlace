@@ -1,6 +1,12 @@
 import mongoose from "mongoose";
 import bycrypt from "bcryptjs";
 const UserSchema = new mongoose.Schema({ 
+    fullname: {
+        type: String,
+        required: true,
+        min:[3, "Fullname must be at least 3 characters"],
+        max:[50, "Fullname must be at most 50 characters"],
+    },
     username: {
         type: String,
         required: true,

@@ -6,8 +6,8 @@ import ApiResponse from "../utils/ApiResponse.js";
 
 const signUp = asyncHandler(async (req, res, next) => {
        try {
-         const{ username, email, password } = req.body;
-         if (!username || !email || !password) {
+         const{ username, email, password, fullname } = req.body;
+         if (!username || !email || !password || !fullname) {
              throw new ApiError(400, "Please fill all the fields");
          }
          const existingUser = await User.findOne({
@@ -20,6 +20,7 @@ const signUp = asyncHandler(async (req, res, next) => {
              username,
              email,
              password,
+             fullname,
          });
          if (!user) {
              throw new ApiError(500, "User not created");
