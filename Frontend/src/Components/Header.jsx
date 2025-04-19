@@ -19,7 +19,7 @@ const Header = () => {
         <ul className='flex gap-6  text-sm'>
             <Link to="/"        className='my-auto hidden sm:inline hover:scale-110'>Home</Link>
             <Link to="/about"     className='my-auto hidden sm:inline hover:scale-110'>About</Link>
-            <Link to="/sign-up"   className='my-auto sm:inline hover:scale-110'>SignIn</Link>
+            <Link to="/sign-up"   className='my-auto sm:inline hover:scale-110'>Sign In</Link>
         </ul>
         </div>
         </div>
