@@ -1,10 +1,11 @@
 import express from 'express';
 import connectDB from './db/connect.db.js';
-const app = express();
 import dotenv from 'dotenv';
 import { UserRouter } from './routes/user.routes.js';
+import { AuthRouter } from './routes/auth.routes.js';
 dotenv.config();
-
+const app = express();
+app.use(express.json());
 
 connectDB()
   .then(() => {
@@ -21,3 +22,4 @@ connectDB()
     res.send('Hello World!');
   });
   app.use("/api/v1/user", UserRouter);
+  app.use("/api/v1/auth", AuthRouter);
