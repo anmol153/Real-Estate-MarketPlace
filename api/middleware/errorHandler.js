@@ -6,6 +6,7 @@ const errorHandler = (err, req, res, next) => {
       status: "error",
       statusCode,
       message,
+      success: false,
    });
 }
 export default errorHandler;

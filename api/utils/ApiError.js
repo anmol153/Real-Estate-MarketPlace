@@ -3,6 +3,7 @@ class ApiError extends Error {
     super(message);
     this.statusCode = statusCode;
     this.error = error;
+    this.success = false;
   }
 }
 export default ApiError;

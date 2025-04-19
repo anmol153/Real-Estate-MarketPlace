@@ -3,6 +3,7 @@ class ApiResponse {
         this.statusCode = statsusCode;
         this.message = message;
         this.data = data;
+        this.success = true;
     }
 }
 export default ApiResponse;
