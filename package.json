@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon api/index.js",
-    "start" : "node api/index.js"
+    "start": "node api/index.js"
   },
   "repository": {
     "type": "git",
@@ -21,8 +21,12 @@
   },
   "homepage": "https://github.com/anmol153/Real-Estate-MarketPlace#readme",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^16.5.0",
     "expess": "^0.0.1-security",
     "express": "^5.1.0",
+    "mongodb": "^6.15.0",
+    "mongoose": "^8.13.2",
     "nodemon": "^3.1.9"
   }
 }
