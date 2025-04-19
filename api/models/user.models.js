@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 import bycrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 const UserSchema = new mongoose.Schema({ 
     fullname: {
         type: String,
@@ -34,4 +37,15 @@ UserSchema.pre("save", async function(next) {
         next();
     }  
 });
+UserSchema.methods.isPasswordMatched = async function(enteredPassword) {
+    return await bycrypt.compare(enteredPassword, this.password);
+};
+
+UserSchema.methods.generateToken = function(){
+    return jwt.sign(
+        { id: this._id },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRY }
+    );
+}
 export const User = mongoose.model("User", UserSchema);

@@ -25,6 +25,7 @@
     "dotenv": "^16.5.0",
     "expess": "^0.0.1-security",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.15.0",
     "mongoose": "^8.13.2",
     "nodemon": "^3.1.9"
