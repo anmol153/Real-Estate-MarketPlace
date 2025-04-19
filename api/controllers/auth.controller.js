@@ -9,7 +9,6 @@ const generate = async (id) => {
     if(!user) {
         throw new ApiError(500, "User not found");
     }
-    console.log(user instanceof mongoose.Model);
     const token  =  user.generateToken();
     return token;
 }
