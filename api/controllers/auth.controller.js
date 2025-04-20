@@ -3,7 +3,6 @@ import { User } from "../models/user.models.js";
 import asyncHandler from "../utils/AsyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
-import mongoose from "mongoose";
 const generate = async (id) => {
     const user = await User.findById(id);
     if(!user) {
@@ -39,7 +38,7 @@ const signUp = asyncHandler(async (req, res, next) => {
              throw new ApiError(500, "User not found");
          }
          
-         res.status(201)
+        return res.status(201)
          .json(new ApiResponse(200, userid, "User created successfully"));
        } catch (error) {
             next(error);
@@ -85,5 +84,50 @@ const signIn = asyncHandler(async (req, res, next) => {
         next(error);
     }
 });
+const google = asyncHandler(async (req, res, next) => {
+    try {
+        const { email, fullName, username, photourl } = req.body;
 
-export { signUp, signIn };
+        if (!email || !fullName) throw new ApiError(500, "Something went wrong");
+
+        let user = await User.findOne({ email }).select("-password");
+
+        if (user) {
+            const token = await generate(user._id);
+
+            return res.status(200)
+                .cookie("token", token, { httpOnly: true })
+                .json(new ApiResponse(200, user, "User signed in successfully"));
+        }
+
+        const existusername = await User.findOne({ username });
+        if (existusername) throw new ApiError(500, "Username already taken");
+
+        const generatePassword =
+            Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+
+        const newUser = await User.create({
+            username,
+            email,
+            password: generatePassword,
+            fullname: fullName,
+            avatar: photourl,
+        });
+
+        if (!newUser) throw new ApiError(500, "User not created");
+
+        const userid = await User.findById(newUser._id).select("-password");
+        if (!userid) throw new ApiError(500, "User not found");
+
+        const token = await generate(userid._id);
+
+        return res.status(201)
+            .cookie("token", token, { httpOnly: true })
+            .json(new ApiResponse(200, userid, "User created successfully"));
+
+    } catch (error) {
+        next(error);
+    }
+});
+
+export { signUp, signIn,google };

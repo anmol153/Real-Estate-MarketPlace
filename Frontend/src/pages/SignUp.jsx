@@ -2,6 +2,7 @@ import React, { useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { useState} from 'react'
 import { useNavigate } from 'react-router-dom'
+import Oauth from '../Components/Oauth'
 const SignUp = () => {
   const navigate = useNavigate();
   const [data, setData] = useState({});
@@ -44,6 +45,7 @@ const SignUp = () => {
           <input type="email" placeholder='email' className = "bg-white p-3 rounded-lg" id ="email"  onChange={changeHandler} />
           <input type="password" placeholder='password' className = "bg-white p-3 rounded-lg" id ="password" onChange={changeHandler}/>
           <button disabled={loading} type='submit' className='bg-slate-700 p-2 rounded-lg text-slate-100 hover:opacity-95 disabled:opacity-80'>{loading ? 'Loading...' : 'Sign Up'}</button>
+          <Oauth/>
         </form>
         <div className='flex flex-col'>
         <div className='flex justify-center items-center gap-2 my-4'>

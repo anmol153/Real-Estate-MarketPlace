@@ -26,6 +26,10 @@ const UserSchema = new mongoose.Schema({
         min:[8, "Password must be at least 8 characters"],
         max:[20, "Password must be at most 20 characters"],
     },
+    avatar:{
+        type: String,
+        default:"https://static.vecteezy.com/system/resources/previews/020/765/399/large_2x/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg",
+    }
 }, { timestamps: true });
 
 UserSchema.pre("save", async function(next) {
