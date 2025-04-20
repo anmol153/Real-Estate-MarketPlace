@@ -2,35 +2,41 @@ import React, { useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { useState} from 'react'
 import { useNavigate } from 'react-router-dom'
+import {useDispatch, useSelector} from 'react-redux'
+import { signInStart,signInFailure,signInSuccess } from '../../redux/user.jsx'
+
+
 const SignIn = () => {
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
   const [data, setData] = useState({});
-  const [error,setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const {loading,error} = useSelector((state) =>state.user);
   const submitHandler = async (e) => {
-      e.preventDefault();
-      setLoading(true);
-      const res = await fetch('/api/v1/auth/sign-in', 
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
+      try {
+        e.preventDefault();
+        dispatch(signInStart());
+        const res = await fetch('/api/v1/auth/sign-in', 
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          }
+        );
+        const result = await res.json();
+        if(result.success === false) {
+          dispatch(signInFailure(result.message));
+          return;
         }
-      );
-      const result = await res.json();
-      console.log(result.success);
-      if(result.success === false) {
-        setError(result.message);
-        setLoading(false);
-        return;
+        dispatch(signInSuccess(data));
+        navigate('/');
+        console.log("result ", result);
+      } catch (error) {
+        dispatch(signInFailure(error.message))
       }
-      setLoading(false);
-      navigate('/');
-      console.log("result ", result);
-  };
-
+    }
   const changeHandler = useCallback((e) => {
     setData((prev) => ({...prev, [e.target.id]: e.target.value}));
   }, [])
@@ -44,7 +50,7 @@ const SignIn = () => {
           <button disabled={loading} type='submit' className='bg-slate-700 p-2 rounded-lg text-slate-100 hover:opacity-95 disabled:opacity-80'>{loading ? 'Loading...' : 'Sign Up'}</button>
         </form>
         <div className='flex flex-col'>
-        <div hidden={error}className='flex justify-center items-center gap-2 my-4'>
+        <div className='flex justify-center items-center gap-2 my-4'>
           <p>Don't Have an Account?</p>
           <Link to="/sign-up" className='text-slate-700 font-semibold underline'>Sign Up</Link>
           </div>

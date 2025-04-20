@@ -59,7 +59,7 @@ const signIn = asyncHandler(async (req, res, next) => {
             email
         }).select("+password");
         if(!user) {
-            throw new ApiError(400, "Invalid credentials");
+            throw new ApiError(400, "User not found");
         }
         const isPasswordMatched = await user.isPasswordMatched(password);
 

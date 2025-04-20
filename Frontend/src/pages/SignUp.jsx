@@ -46,7 +46,7 @@ const SignUp = () => {
           <button disabled={loading} type='submit' className='bg-slate-700 p-2 rounded-lg text-slate-100 hover:opacity-95 disabled:opacity-80'>{loading ? 'Loading...' : 'Sign Up'}</button>
         </form>
         <div className='flex flex-col'>
-        <div hidden={error}className='flex justify-center items-center gap-2 my-4'>
+        <div className='flex justify-center items-center gap-2 my-4'>
           <p>Have an Account?</p>
           <Link to="/sign-in" className='text-slate-700 font-semibold underline'>Sign In</Link>
           </div>
