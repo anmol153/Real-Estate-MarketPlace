@@ -1,6 +1,7 @@
 import {createBrowserRouter,createRoutesFromElements,Route,RouterProvider,} from "react-router-dom";
 import { Home, SignIn, SignUp, About, Profile } from "./pages/index.jsx";
 import Layout from "./pages/Layout.jsx";
+import PrivateRoutes from "./Components/privateRoutes.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -10,7 +11,9 @@ const router = createBrowserRouter(
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/about" element={<About />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route element={<PrivateRoutes/>}>
+          <Route path="/profile" element={<Profile />} />
+        </Route>
         </Route>
     </>
   )
