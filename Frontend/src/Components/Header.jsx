@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { FaSearch } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
+import PrivateRoutes from './privateRoutes';
 const Header = () => {
   const currentUser = useSelector((state) => state.user);
   return (
@@ -21,7 +22,8 @@ const Header = () => {
         <ul className='flex gap-6  text-sm'>
             <Link to="/"        className='my-auto hidden sm:inline hover:scale-110'>Home</Link>
             <Link to="/about"     className='my-auto hidden sm:inline hover:scale-110'>About</Link>
-            {currentUser.currentUser ? <img src ={currentUser.currentUser.data.avatar} className ="rounded-full h-7 w-7 object-cover my-3"alt ="profile" /> : <Link to="/sign-up"   className='my-auto sm:inline hover:scale-110'>Sign In</Link>}
+            {currentUser.currentUser ? <Link to="/profile"><img src ={currentUser.currentUser.data.avatar} className ="rounded-full h-7 w-7 object-cover my-3"alt ="profile" /> 
+            </Link> : <Link to="/sign-up"   className='my-auto sm:inline hover:scale-110'>Sign In</Link>}
         </ul>
         </div>
         </div>

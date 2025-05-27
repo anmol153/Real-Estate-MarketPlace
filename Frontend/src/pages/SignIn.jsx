@@ -44,7 +44,7 @@ const SignIn = () => {
   console.log(data);
   return (
     <div className='p-3 max-w-lg mx-auto'>
-      <h1 className='text-3xl text-center font-semibold my-7'>Sign In</h1> {/* Updated heading */}
+      <h1 className='text-3xl text-center font-semibold my-7'>Sign In</h1> 
         <form onSubmit={submitHandler} className='flex flex-col gap-4'>
           <input type="email" placeholder='email' className = "bg-white p-3 rounded-lg" id ="email"  onChange={changeHandler} />
           <input type="password" placeholder='password' className = "bg-white p-3 rounded-lg" id ="password" onChange={changeHandler}/>

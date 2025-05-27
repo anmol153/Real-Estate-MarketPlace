@@ -27,7 +27,7 @@ const Oauth = () => {
                     username: generateUsername(result.user.displayName),
                     fullName: result.user.displayName,
                     email:result.user.email,
-                    photourl:result.user.photoURL
+                    photourl:result.user.photoURL,
                 })
             });
             const data = await res.json();
