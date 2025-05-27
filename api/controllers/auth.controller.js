@@ -129,5 +129,37 @@ const google = asyncHandler(async (req, res, next) => {
         next(error);
     }
 });
+const updateDetails = asyncHandler(async (req, res, next) => {
+    try {
+        const { email, fullname, username } = req.body;
 
-export { signUp, signIn,google };
+        if (!email && !fullname && !username) {
+            throw new ApiError(400, "All fields are empty");
+        }
+
+        if( email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            throw new ApiError(400, "Invalid email format");
+        }
+
+        const usernameIsAlreadyTaken = await User.findOne({ username });
+        
+        if(usernameIsAlreadyTaken) throw new ApiError(505,"Username is already exist");
+
+
+        const user = await User.findById(req.user_id);
+        if (!user) {
+            throw new ApiError(404, "User not found");
+        }
+
+        {email && (user.email = email)};
+        {fullname && (user.fullname = fullname)};
+        {username && (user.username = username)};
+
+        await user.save();
+
+        return res.status(200).json(new ApiResponse(200, user, "User details updated successfully"));
+    } catch (error) {
+        next(error);
+    }
+})
+export { signUp, signIn,google,updateDetails };
