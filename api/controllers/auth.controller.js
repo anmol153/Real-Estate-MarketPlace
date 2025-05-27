@@ -39,6 +39,11 @@ const signUp = asyncHandler(async (req, res, next) => {
          }
          
         return res.status(201)
+         .cookie("token", generate(userid._id), {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production", 
+            sameSite: "strict",
+         })
          .json(new ApiResponse(200, userid, "User created successfully"));
        } catch (error) {
             next(error);
@@ -131,20 +136,15 @@ const google = asyncHandler(async (req, res, next) => {
 });
 const updateDetails = asyncHandler(async (req, res, next) => {
     try {
-        const { email, fullname, username } = req.body;
+        const { email, avatar, fullName } = req.body;
 
-        if (!email && !fullname && !username) {
+        if (!email && !avatar && !fullName) {
             throw new ApiError(400, "All fields are empty");
         }
 
-        if( email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             throw new ApiError(400, "Invalid email format");
         }
-
-        const usernameIsAlreadyTaken = await User.findOne({ username });
-        
-        if(usernameIsAlreadyTaken) throw new ApiError(505,"Username is already exist");
-
 
         const user = await User.findById(req.user_id);
         if (!user) {
@@ -152,8 +152,8 @@ const updateDetails = asyncHandler(async (req, res, next) => {
         }
 
         {email && (user.email = email)};
-        {fullname && (user.fullname = fullname)};
-        {username && (user.username = username)};
+        {avatar && (user.avatar = avatar)};
+        {fullName && (user.fullName = fullName)};
 
         await user.save();
 
@@ -162,4 +162,30 @@ const updateDetails = asyncHandler(async (req, res, next) => {
         next(error);
     }
 })
-export { signUp, signIn,google,updateDetails };
+const updatepassword = asyncHandler(async (req, res, next) => {
+    try {
+        const { old_Password, new_Password } = req.body;
+        {console.log("old_Password", old_Password)}
+        {console.log("new_Password", new_Password)}
+        if (!old_Password || !new_Password) {
+            throw new ApiError(400, "Please provide old and new password");
+        }
+
+        const user = await User.findById(req.user_id).select("+password");
+        if (!user) {
+            throw new ApiError(404, "User not found");
+        }
+
+        const isOldPasswordMatched = await user.isPasswordMatched(old_Password);
+        if (!isOldPasswordMatched) {
+            throw new ApiError(400, "Old password is incorrect");
+        }
+
+        user.password = new_Password;
+        await user.save();
+        return res.status(200).json(new ApiResponse(200, null, "Password updated successfully"));
+    } catch (error) {
+        next(error);
+    }
+});
+export { signUp, signIn,google,updateDetails,updatepassword };

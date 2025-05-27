@@ -2,6 +2,7 @@ import {createBrowserRouter,createRoutesFromElements,Route,RouterProvider,} from
 import { Home, SignIn, SignUp, About, Profile } from "./pages/index.jsx";
 import Layout from "./pages/Layout.jsx";
 import PrivateRoutes from "./Components/privateRoutes.jsx";
+import PasswordChange from "./pages/PasswordChange.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -13,6 +14,7 @@ const router = createBrowserRouter(
         <Route path="/about" element={<About />} />
         <Route element={<PrivateRoutes/>}>
           <Route path="/profile" element={<Profile />} />
+          <Route path="/password-change" element={<PasswordChange />} />
         </Route>
         </Route>
     </>
