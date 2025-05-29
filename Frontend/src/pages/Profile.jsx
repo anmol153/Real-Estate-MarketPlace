@@ -176,6 +176,9 @@ const Profile = () => {
           onChange={ChangeHandler}
         />
         <button disabled={loading} type='submit' className='bg-slate-700 p-2 rounded-lg text-slate-100 hover:opacity-95 disabled:opacity-80'>{loading ? 'Updating...' : 'Update'}</button>
+        <Link to="/create-listing" className='bg-green-600 p-2 rounded-lg text-center text-slate-100 hover:opacity-95 disabled:opacity-80'>
+          Create Listing
+        </Link>
         <Link to="/password-change" className='text-slate-700 font-semibold underline text-center'>
           Change Password
         </Link>

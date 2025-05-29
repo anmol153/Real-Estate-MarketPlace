@@ -22,6 +22,7 @@ const Header = () => {
         <ul className='flex gap-6  text-sm'>
             <Link to="/"        className='my-auto hidden sm:inline hover:scale-110'>Home</Link>
             <Link to="/about"     className='my-auto hidden sm:inline hover:scale-110'>About</Link>
+            {/* {console.log(currentUser.currentUser.avatar)} */}
             {currentUser && currentUser.currentUser ? <Link to="/profile"><img src ={currentUser.currentUser.avatar} className ="rounded-full h-7 w-7 object-cover my-3"alt ="profile" /> 
             </Link> : <Link to="/sign-up"   className='my-auto sm:inline hover:scale-110'>Sign In</Link>}
         </ul>

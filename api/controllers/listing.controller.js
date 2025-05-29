@@ -1,4 +1,4 @@
-import { Listing } from '../models/listing.models.js';
+import { Listing }  from '../models/listing.models.js';
 import ApiResponse from '../utils/ApiResponse.js';
 import ApiError from '../utils/ApiError.js';
 const createListing = async (req, res,next) => {
