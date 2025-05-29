@@ -3,6 +3,7 @@ import { User } from "../models/user.models.js";
 import asyncHandler from "../utils/AsyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
+import { deleteOnCloudinary, uploadOnChoudinary } from "../db/cloudinary.js";
 const generate = async (id) => {
     const user = await User.findById(id);
     if(!user) {
@@ -39,7 +40,7 @@ const signUp = asyncHandler(async (req, res, next) => {
          }
          
         return res.status(201)
-         .cookie("token", generate(userid._id), {
+         .cookie("token", await generate(userid._id), {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production", 
             sameSite: "strict",
@@ -77,7 +78,7 @@ const signIn = asyncHandler(async (req, res, next) => {
             throw new ApiError(500, "User not found");
         }
 
-        const token = generate(user._id);
+        const token =  await generate(user._id);
 
         return res.status(200)
         .cookie("token", token, {
@@ -136,9 +137,9 @@ const google = asyncHandler(async (req, res, next) => {
 });
 const updateDetails = asyncHandler(async (req, res, next) => {
     try {
-        const { email, avatar, fullName } = req.body;
-
-        if (!email && !avatar && !fullName) {
+        const { email, username, fullName } = req.body;
+        
+        if (!email && !username && !fullName) {
             throw new ApiError(400, "All fields are empty");
         }
 
@@ -150,10 +151,18 @@ const updateDetails = asyncHandler(async (req, res, next) => {
         if (!user) {
             throw new ApiError(404, "User not found");
         }
-
-        {email && (user.email = email)};
-        {avatar && (user.avatar = avatar)};
-        {fullName && (user.fullName = fullName)};
+        const existingUser = await User.findOne({
+            $or: [
+                { email: email },
+                { username: username }
+            ]
+        });
+        if (existingUser) {
+            throw new ApiError(400, "Email or username already taken");
+        }
+        { username && (user.username = username) };
+        { email && (user.email = email) };
+        { fullName && (user.fullname = fullName) };
 
         await user.save();
 
@@ -188,4 +197,58 @@ const updatepassword = asyncHandler(async (req, res, next) => {
         next(error);
     }
 });
-export { signUp, signIn,google,updateDetails,updatepassword };
+
+
+const signOut = asyncHandler(async (req, res, next) => {
+  try {
+    return res.status(200)
+      .clearCookie("token", {
+        httpOnly: true,
+      })
+      .json({ success: true, message: "User signed out successfully" });
+  } catch (error) {
+    console.error("Error in signOut:", error); 
+    next(error);
+  }
+});
+
+
+const deleteAccount = asyncHandler(async (req, res, next) => {
+    try {
+        const user = await User.findByIdAndDelete(req.user_id);
+        if (!user) {
+            throw new ApiError(404, "User not found");
+        }
+        return res.status(200).json(new ApiResponse(200, null, "User account deleted successfully"));
+    } catch (error) {
+        next(error);
+    }
+});
+
+ const uploadAvatar = asyncHandler(async (req, res, next) => {
+    try {
+        const avatarLocalPath = req.files?.avatar[0]?.path;
+        console.log(avatarLocalPath);
+        if (!avatarLocalPath) {
+            throw new ApiError(400, "Avatar file is required");
+        }
+        const user = await User.findById(req.user_id);
+        if (!user) {
+            throw new ApiError(404, "User not found");
+        }
+
+        if (user.avatar && user.avatar !== "https://static.vecteezy.com/system/resources/previews/020/765/399/large_2x/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg") {
+            await deleteOnCloudinary(user.avatar);
+        }
+        const avatar = await uploadOnChoudinary(avatarLocalPath);
+
+        if(!avatar) throw new ApiError(409,"Avatar file is required");
+        user.avatar = avatar.secure_url;
+        await user.save();
+        return res.status(200).json(new ApiResponse(200, user, "Avatar uploaded successfully"));
+    } catch (error) {
+        next(error);
+    }
+});
+
+export { signUp, signIn, google, updateDetails, updatepassword, signOut, deleteAccount, uploadAvatar };

@@ -31,7 +31,8 @@ const SignIn = () => {
           dispatch(signInFailure(result.message));
           return;
         }
-        dispatch(signInSuccess(data));
+        dispatch(signInSuccess(result.data));
+        setData({});
         navigate('/');
         console.log("result ", result);
       } catch (error) {
@@ -48,7 +49,7 @@ const SignIn = () => {
         <form onSubmit={submitHandler} className='flex flex-col gap-4'>
           <input type="email" placeholder='email' className = "bg-white p-3 rounded-lg" id ="email"  onChange={changeHandler} />
           <input type="password" placeholder='password' className = "bg-white p-3 rounded-lg" id ="password" onChange={changeHandler}/>
-          <button disabled={loading} type='submit' className='bg-slate-700 p-2 rounded-lg text-slate-100 hover:opacity-95 disabled:opacity-80'>{loading ? 'Loading...' : 'Sign Up'}</button>
+          <button disabled={loading} type='submit' className='bg-slate-700 p-2 rounded-lg text-slate-100 hover:opacity-95 disabled:opacity-80'>{loading ? 'Loading...' : 'Sign In'}</button>
           <Oauth/>
         </form>
         <div className='flex flex-col'>

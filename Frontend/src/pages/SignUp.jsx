@@ -7,7 +7,7 @@ const SignUp = () => {
   const navigate = useNavigate();
   const [data, setData] = useState({});
   const [error,setError] = useState(null);
-  const {loading, setLoading} = useState(false);
+  const [loading, setLoading] = useState(false);
   const submitHandler = async (e) => {
       e.preventDefault();
       setLoading(true);
@@ -29,6 +29,7 @@ const SignUp = () => {
       }
       setLoading(false);
       navigate('/sign-in');
+      alert(result.message);
       console.log("result ", result);
   };
 

@@ -5,6 +5,7 @@ import { UserRouter } from './routes/user.routes.js';
 import { AuthRouter } from './routes/auth.routes.js';
 import errorHandler from './middleware/errorHandler.js';
 import cookieParser from 'cookie-parser';
+import { ListingRoutes } from './routes/listing.routes.js';
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -21,10 +22,8 @@ connectDB()
     console.error(`Database connection error: ${error.message}`);
   });
 
-  app.get('/', (req, res) => {
-    res.send('Hello World!');
-  });
-  app.use("/api/v1/user", UserRouter);
-  app.use("/api/v1/auth", AuthRouter);
 
-  app.use(errorHandler);
+app.use("/api/v1/user", UserRouter);
+app.use("/api/v1/auth", AuthRouter);
+app.use('/api/v1/listings', ListingRoutes);
+app.use(errorHandler);

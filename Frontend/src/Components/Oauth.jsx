@@ -30,9 +30,9 @@ const Oauth = () => {
                     photourl:result.user.photoURL,
                 })
             });
-            const data = await res.json();
-            console.log(data);
-            dispatch(signInSuccess(data));
+            const result1 = await res.json();
+            console.log(result1);
+            dispatch(signInSuccess(result1.data));
             navigate("/");
         } catch (error) {
             console.log("could not sign in with google",error);
