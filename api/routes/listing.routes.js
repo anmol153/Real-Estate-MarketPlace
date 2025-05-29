@@ -1,9 +1,9 @@
-import React from 'react'
+import { Router } from 'express'
+import { createListing } from '../controllers/listing.controller.js';
+import JWTverify from '../middleware/JWTverify.js';
 
-function ListingRoutes() {
-  return (
-    <div>ListingRoutes</div>
-  )
-}
+const ListingRoutes =  Router();
+
+ListingRoutes.post("/create",JWTverify,createListing);
 
 export { ListingRoutes }
