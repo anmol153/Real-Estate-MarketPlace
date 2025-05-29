@@ -15,7 +15,6 @@ const Profile = () => {
   const imgref = useRef(null);
   const [file, setFile] = useState(null);
   const currentUser = useSelector(state => state.user.currentUser);
-  
   const ChangeHandler = useCallback((e) => {
       setUserData((prev) => ({...prev, [e.target.id]: e.target.value}));
     }, []);

@@ -1,7 +1,10 @@
 import { Listing }  from '../models/listing.models.js';
 import ApiResponse from '../utils/ApiResponse.js';
 import ApiError from '../utils/ApiError.js';
-const createListing = async (req, res,next) => {
+import asyncHandler from '../utils/AsyncHandler.js'; 
+import { User } from '../models/user.models.js';
+import { deleteOnCloudinary, uploadOnChoudinary } from '../db/cloudinary.js';
+const createListing =  asyncHandler(async (req, res,next) => {
     try{
         const { name,
             description,
@@ -15,10 +18,23 @@ const createListing = async (req, res,next) => {
             type,
             offer,
             imageUrls,
-            userRef } = req.body;
-        if(!name || !description || !address || !regularPrice || !bathrooms || !bedrooms || !furnished || !parking || !type || !imageUrls || !userRef) {
+             } = req.body;
+            {console.log("in the back",req.body)}
+       if (
+            !name ||
+            !description ||
+            !address ||
+            regularPrice === undefined ||
+            bathrooms === undefined ||
+            bedrooms === undefined ||
+            furnished === undefined ||
+            parking === undefined ||
+            !type ||
+            !Array.isArray(imageUrls) || imageUrls.length === 0 ||
+            !req.user_id
+            ) {
             throw new ApiError(400, "Please fill all the fields");
-        }
+            }
         const listing = await Listing.create({ name,
             description,
             address,
@@ -31,7 +47,7 @@ const createListing = async (req, res,next) => {
             type,
             offer,
             imageUrls,
-            userRef });
+            userRef:req.user_id });
         if(!listing) {
             throw new ApiError(500, "Listing not created");
         }
@@ -40,6 +56,48 @@ const createListing = async (req, res,next) => {
     catch(error) {
         next(error);
     }
-};
+});
 
-export {createListing};
+const uploadImage = asyncHandler(async (req,res,next)=>{
+    try {
+        let ImageUrl = [];
+        for(let i = 0;i<req.files?.file.length;i++){
+        const fileLocalPath = req.files?.file[i]?.path;
+        {console.log(fileLocalPath);}
+        if (!fileLocalPath) {
+            throw new ApiError(400, "Files  are required");
+        }
+        const user = await User.findById(req.user_id);
+        if (!user) {
+            throw new ApiError(404, "User not found");
+        }
+
+        const ImageUrls = await uploadOnChoudinary(fileLocalPath);
+
+        if(!ImageUrls) throw new ApiError(501,"Files are not uploaded");
+        {console.log(ImageUrls)}
+        ImageUrl.push(ImageUrls.secure_url);
+    }
+        return res.status(200).json(new ApiResponse(200, ImageUrl,"Files uploaded successfully"));
+    } catch (error) {
+        next(error);
+    }
+});
+
+const deleteupload  = asyncHandler(async (req,res,next)=>{
+        try {
+            const {url} = req.body;
+            if(!url) throw new ApiError(400,"Url is missing");
+    
+            const deleteurl = deleteOnCloudinary(url);
+    
+            if(!deleteurl) throw new ApiError(500,"Something went Wrong");
+    
+            return res.status(200)
+            .json(new ApiResponse(200,deleteurl,"Listing is successfully Deleted"));
+        } catch (error) {
+            next(error);
+        }
+})
+
+export {createListing,uploadImage,deleteupload};

@@ -1,9 +1,15 @@
 import { Router } from 'express'
-import { createListing } from '../controllers/listing.controller.js';
+import { createListing, deleteupload, uploadImage } from '../controllers/listing.controller.js';
 import JWTverify from '../middleware/JWTverify.js';
-
+import { upload } from '../middleware/multer.js';
 const ListingRoutes =  Router();
 
-ListingRoutes.post("/create",JWTverify,createListing);
-
+ListingRoutes.post("/create_listing",JWTverify,createListing);
+ListingRoutes.post ("/upload_Image",JWTverify,
+    upload.fields([{
+        name:"file",
+        maxCount:6,
+    }])
+,uploadImage);
+ListingRoutes.post("/delete_Image",JWTverify,deleteupload);
 export { ListingRoutes }

@@ -4,6 +4,7 @@ import Layout from "./pages/Layout.jsx";
 import PrivateRoutes from "./Components/privateRoutes.jsx";
 import PasswordChange from "./pages/PasswordChange.jsx";
 import { CreateListing } from "./pages/CreateListing.jsx";
+import Listing from "./pages/Listing.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -17,6 +18,7 @@ const router = createBrowserRouter(
           <Route path="/profile" element={<Profile />} />
           <Route path="/password-change" element={<PasswordChange />} />
           <Route path = "/create-listing" element ={<CreateListing/>} />
+          <Route path = "listing/:id" element = {<Listing/>} />
         </Route>
         </Route>
     </>
