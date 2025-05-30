@@ -94,10 +94,38 @@ const deleteupload  = asyncHandler(async (req,res,next)=>{
             if(!deleteurl) throw new ApiError(500,"Something went Wrong");
     
             return res.status(200)
-            .json(new ApiResponse(200,deleteurl,"Listing is successfully Deleted"));
+            .json(new ApiResponse(200,deleteurl,"Image is successfully Deleted"));
         } catch (error) {
             next(error);
         }
 })
 
-export {createListing,uploadImage,deleteupload};
+
+const deletelisting = asyncHandler(async (req, res, next) => {
+  const { listingId } = req.body;
+
+  if (!listingId) {
+    throw new ApiError(400, "Listing ID is required");
+  }
+
+  const listing = await Listing.findById(listingId);
+  if (!listing) {
+    throw new ApiError(404, "Listing not found");
+  }
+
+  for (let i = 0; i < listing.imageUrls.length; i++) {
+    const deleted = await deleteOnCloudinary(listing.imageUrls[i]);
+    if (!deleted) {
+      throw new ApiError(500, "Failed to delete image from Cloudinary");
+    }
+  }
+
+  const delete_listing = await Listing.findByIdAndDelete(listingId);
+  if (!delete_listing) {
+    throw new ApiError(500, "Listing could not be deleted from database");
+  }
+
+  return res.status(200).json(new ApiResponse(200, "", "Listing deleted successfully"));
+});
+
+export {createListing,uploadImage,deleteupload,deletelisting};
