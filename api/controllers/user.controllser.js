@@ -1,6 +1,23 @@
+import ApiError from "../utils/ApiError.js";
+import asyncHandler from "../utils/AsyncHandler.js";
+import { Listing } from "../models/listing.models.js";
+import ApiResponse from "../utils/ApiResponse.js";
+const getUserListings = asyncHandler( async(req,res,next) =>{
+   try {
+     const user = req.user_id;
+ 
+     if(!user) throw new ApiError(400,"User is not valid");
+ 
+     if(req.user_id != req.params.id) throw new ApiError(400, "You only view  your own lisiting ");
+     
+     const listing = await Listing.find( { userRef: req.params.id})
+    
+     return res.status(200)
+     .json(new ApiResponse(200,listing,"Listings fetched Successfully"));
+    } 
+    catch (error) {
+    next(error);
+   }
+})
 
-
-const test = async (req, res) => {
-}
-
-export { test, };
+export {getUserListings};
