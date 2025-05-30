@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { createListing, deleteupload, getListing, updateListing, uploadImage } from '../controllers/listing.controller.js';
+import { createListing, deleteupload, getListing, updateListing, uploadImage,getListings } from '../controllers/listing.controller.js';
 import JWTverify from '../middleware/JWTverify.js';
 import { upload } from '../middleware/multer.js';
 import { deletelisting } from '../controllers/listing.controller.js';
@@ -16,4 +16,5 @@ ListingRoutes.post("/delete_Image",JWTverify,deleteupload);
 ListingRoutes.post("/delete",JWTverify,deletelisting);
 ListingRoutes.post("/update/:id",JWTverify,updateListing);
 ListingRoutes.get('/getListing/:id',getListing);
+ListingRoutes.get('/get', getListings);
 export { ListingRoutes }
