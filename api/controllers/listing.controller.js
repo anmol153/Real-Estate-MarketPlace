@@ -127,5 +127,36 @@ const deletelisting = asyncHandler(async (req, res, next) => {
 
   return res.status(200).json(new ApiResponse(200, "", "Listing deleted successfully"));
 });
+ 
 
-export {createListing,uploadImage,deleteupload,deletelisting};
+const updateListing = asyncHandler((async(req,res,next)=>{
+            const listing = await Listing.findById(req.params?.id);
+            if (!listing) {
+            return next(errorHandler(404, 'Listing not found!'));
+            }
+            if (req.user_id !== listing.userRef) {
+            return next(errorHandler(401, 'You can only update your own listings!'));
+            }
+            try {
+                const updatedListing = await Listing.findByIdAndUpdate(
+                req.params.id,
+                req.body,
+                { new: true }
+                );
+                res.status(200).json(new ApiResponse(updatedListing));
+            } catch (error) {
+                next(error);
+            }
+            }));
+
+const getListing = asyncHandler(async(req,res,next)=>{
+    try {
+        const listing = await Listing.findById(req.params.id);
+        if(!listing)  throw  new ApiError(500,"Listing not Found");
+        return res.status(200)
+        .json(new ApiResponse(200,listing,"Listing Fetched SuccessFully"));
+    } catch (error) {
+        
+    }
+})
+export {createListing,uploadImage,deleteupload,deletelisting,updateListing,getListing};

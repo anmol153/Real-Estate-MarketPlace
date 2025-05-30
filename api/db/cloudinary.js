@@ -18,6 +18,7 @@ const uploadOnChoudinary = async (localFilePath) => {
 
         const response = await cloudinary.uploader.upload(localFilePath, {
             resource_type: "auto",
+            timeout: 60000
         });
 
         console.log("✅ File uploaded successfully:", response.secure_url);

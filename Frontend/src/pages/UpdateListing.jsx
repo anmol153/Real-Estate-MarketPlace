@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useCallback } from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-function CreateListing() {
+import { useParams } from 'react-router-dom';
+function UpdateListing() {
   const [sale,setSale] = useState(true);
   const [data,setData] = useState({
     parking:false,
@@ -18,12 +18,13 @@ function CreateListing() {
   const [loading,setLoading] = useState('');
   const [offer,setoffer] = useState(false);
   const navigate = useNavigate();
+  const param = useParams();
 
   useEffect(() => {
   console.log(imageURL);
   }, [imageURL]);
 
-
+  
   const changeHandler = useCallback((e) => {
   const { id, type, checked, value } = e.target;
       setData(prev => ({
@@ -32,7 +33,22 @@ function CreateListing() {
       }));
     }, []);
 
-
+    useEffect(()=>{
+        const fetchListing = async()=>{
+        const id = param.id;
+        const res = await fetch(`/api/v1/listings/getListing/${id}`);
+        const result = await res.json();
+        if(result.success == true){
+            setData(result.data);
+            setSale(result.data.type == "sale");
+            setoffer(result.data.offer == true);
+            setimageURL(result.data.imageUrls);
+            console.log(data);
+        }
+        else console.log(data.message);
+        };
+        fetchListing();
+    },[]);
   const deleteUpload = async (urlToDelete) => {
   setLoading('Deleting');
   console.log("Required to delete:", urlToDelete);
@@ -115,9 +131,9 @@ const uploadHandler = async (e) => {
     data.type = sale===true ? "sale" : "rent";
     data.imageUrls = imageURL;
     console.log(data);
-    setLoading("Creating");
+    setLoading("Updating");
       try {
-         const res = await fetch('/api/v1/listings/create_listing', {
+         const res = await fetch(`/api/v1/listings/update/${param.id}`, {
            method: 'POST',
            headers: {
              'Content-Type': 'application/json',
@@ -127,32 +143,32 @@ const uploadHandler = async (e) => {
          const result = await res.json();
          setLoading('');
          if (result.success) {
-           alert("Listing created Successfully");
+           alert("Listing Updated Successfully");
            console.log(result);
-           navigate(`/listing/${result.data._id}`)
+           navigate(`/profile`);
          } else {
-           console.log(result.message);
-           setMessage(result.message);
+           console.log("Failed to update listing");
+            setMessage("Failed to update listing");
          }
        } catch (error) {
-         console.log("Eror in creating of listing", error);
-         setMessage("Error in cresating of Listing");
+         console.log("Eror in Updating of listing", error);
+         setMessage("Failed to update listing");
        }
      };
   return (
     <main >
       <div className= "md:max-w-10/12 mx-auto p-4 bg-white shadow-md rounded-lg mt-5">
-        <h1 className='text-3xl font-semibold text-center '>Create a Listing</h1>
+        <h1 className='text-3xl font-semibold text-center '>Update a Listing</h1>
         {Message && <h3 className='test-5xl text-center '>{Message}</h3>}
           <form className='mt-6 space-y-4' onSubmit={formSubmit}>
             <div className='flex flex-col sm:flex-row gap-4'>
               <div className='gap-4 flex flex-col flex-1'>
-                <input  type = "text" placeholder='Name' id = "name" onChange={changeHandler} className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' maxLength={62} minLength={10} required />
-                <textarea id="description" onChange={changeHandler}
-                  placeholder='Description'
-                  className="w-full p-2 border h-20 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2 resize-none"
-                />
-                <input type = "text" placeholder ='Address' id="address" onChange={changeHandler} className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2' />
+                <input type="text" placeholder="Name" id="name" value={data.name || ''} onChange={changeHandler} className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" maxLength={62} minLength={10} required />
+                <textarea id="description" value={data.description || ''} onChange={changeHandler}
+                    placeholder="Description"
+                    className="w-full p-2 border h-20 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2 resize-none"
+                    />
+                <input type = "text" placeholder ='Address' id="address" value={data.address || ''} onChange={changeHandler} className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2' />
               <div className='flex flex-row flex-wrap gap-4 mt-4'>
                 <div className="flex gap-2">
                     <input type = "checkbox" id= 'sale'  onChange={()=>setSale(prev=>(!prev))}  checked={sale === true}  className="w-5 h-5  accent-blue-600 rounded"/>
@@ -163,17 +179,17 @@ const uploadHandler = async (e) => {
                   <span className='text-sm'>Rent</span>
               </div>
               <div className="flex gap-2">
-                  <input type = "checkbox" id= 'parking' className='w-5 h-5  accent-blue-600 rounded'
+                  <input type = "checkbox" id= 'parking' checked={data.parking} className='w-5 h-5  accent-blue-600 rounded'
                   onChange = {changeHandler}/>
                   <span className='text-sm'>Parking spot</span>
               </div>
               <div className="flex gap-2">
-                  <input type = "checkbox" id= 'furnished' className='w-5 h-5  accent-blue-600 rounded'
+                  <input type = "checkbox" id= 'furnished' checked={data.furnished} className='w-5 h-5  accent-blue-600 rounded'
                   onChange = {changeHandler}/>
                   <span className='text-sm'>Furnished</span>
               </div>
               <div className="flex gap-2">
-                  <input type = "checkbox" id= 'offer' className='w-5 h-5  accent-blue-600 rounded'
+                  <input type = "checkbox" id= 'offer' checked={offer} className='w-5 h-5  accent-blue-600 rounded'
                   onChange = {changeHandler}
                   onClick=  {()=>setoffer(prev=>!prev)}/>
                   <span className='text-sm'>Offer</span>
@@ -182,22 +198,22 @@ const uploadHandler = async (e) => {
               <div>
                 <div className='flex flex-row flex-wrap gap-6 mt-4 '>
                   <div className='flex gap-2 items-center'>
-                      <input type="number"  id ="bedrooms" className='w-15 border p-3 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 '
+                      <input type="number"  id ="bedrooms" value={data.bedrooms || ''} className='w-15 border p-3 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 '
                       onChange = {changeHandler} min={0} max={10} required />
                       <p>Beds</p>
                   </div>
                 
                   <div className='flex gap-2 items-center'>
-                      <input type="number"  onChange = {changeHandler} id ="bathrooms" className='w-15 border p-3 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ' min={0} max={10} required />
+                      <input type="number"  onChange = {changeHandler} id ="bathrooms" value={data.bathrooms || ''} className='w-15 border p-3 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ' min={0} max={10} required />
                       <p>Baths</p>
                   </div>
                   <div className='flex gap-2 items-center'>
-                      <input type="number"  id ="regularPrice" onChange = {changeHandler} className='w-35 border p-3 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ' min={0}  required />
+                      <input type="number"  id ="regularPrice" value={data.regularPrice || ''} onChange = {changeHandler} className='w-35 border p-3 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ' min={0}  required />
                       <p>Regular Price </p>
                       {/* <p>(INR/Month)</p> */}
                   </div>
                   <div className='flex gap-2 items-center'>
-                      <input type="number"  id ="discountedPrice" onChange = {changeHandler} className={`w-35 border p-3 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${offer === false ? "hidden" : ""}`} min={0}   />
+                      <input type="number"  id ="discountedPrice" value={data.discountedPrice || ''} onChange = {changeHandler} className={`w-35 border p-3 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${offer === false ? "hidden" : ""}`} min={0}   />
                       {offer && <p>Discounted Price </p>}
                       {/* <p>(INR/Month)</p> */}
                   
@@ -217,6 +233,7 @@ const uploadHandler = async (e) => {
                     <div key={index} className="relative">
                       <img src={url} alt={`upload-${index}`} className="w-32 h-32 object-cover rounded" />
                       <button
+                        type="button"
                         onClick={() => deleteUpload(url)}
                         className="absolute top-1 right-1 bg-red-500 text-white rounded-full px-2 py-1 text-xs"
                       >
@@ -224,7 +241,7 @@ const uploadHandler = async (e) => {
                       </button>
                       </div>
                     ))}
-                <button  disabled={loading === "Creating"|| loading =='Uploading'} className = {`p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80 text-center`}>{loading==="Creating" ? "Creating" : "Create Listing"}</button>
+                <button  disabled={loading === "Updating"|| loading =='Uploading'} className = {`p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80 text-center`}>{loading==="Updating" ? "Editing" : "Edit Listing"}</button>
               </div>
             </div>
           </form>
@@ -232,4 +249,4 @@ const uploadHandler = async (e) => {
     </main>
   )
 }
-export { CreateListing };
+export { UpdateListing };

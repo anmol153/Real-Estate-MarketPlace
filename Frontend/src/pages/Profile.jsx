@@ -78,7 +78,8 @@ const DeleteHandler = async (item) => {
 
 
 
-  useEffect(async()=>{
+  useEffect(()=>{
+    const fe =async()=>{
     try {
       const listings = await fetch(`/api/v1/user/listing/${currentUser._id}`);
       const data = await listings.json();
@@ -96,6 +97,8 @@ const DeleteHandler = async (item) => {
       console.log("error ",error.message);
       setlistme(error.message);
     }
+  }
+  fe();
   },[]);
   const formSubmitHandler = async (e) => {
     e.preventDefault();
@@ -277,8 +280,8 @@ const DeleteHandler = async (item) => {
                 >
                   Delete
                 </button>
-                <Link to={`/update-listing/${listing}`}>
-                  <button className={`w-full text-white  rounded-lg p-1 text-sm bg-green-400`}>Edit</button>
+                <Link to={`/update-listing/${listing._id}`}>
+                  <button className={`w-full text-white  rounded-lg p-1 text-sm bg-green-400 mt-2`}>Edit</button>
                 </Link>
               </div>
             </div>

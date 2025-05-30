@@ -5,6 +5,7 @@ import PrivateRoutes from "./Components/privateRoutes.jsx";
 import PasswordChange from "./pages/PasswordChange.jsx";
 import { CreateListing } from "./pages/CreateListing.jsx";
 import Listing from "./pages/Listing.jsx";
+import { UpdateListing } from "./pages/UpdateListing.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -14,11 +15,13 @@ const router = createBrowserRouter(
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/about" element={<About />} />
+        <Route path='/listing/:id' element = {<Listing/>} /> 
         <Route element={<PrivateRoutes/>}>
           <Route path="/profile" element={<Profile />} />
           <Route path="/password-change" element={<PasswordChange />} />
           <Route path = "/create-listing" element ={<CreateListing/>} />
           <Route path = "listing/:id" element = {<Listing/>} />
+          <Route path = "update-listing/:id" element = {<UpdateListing/>} />
         </Route>
         </Route>
     </>
