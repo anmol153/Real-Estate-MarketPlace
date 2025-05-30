@@ -2,6 +2,9 @@ import ApiError from "../utils/ApiError.js";
 import asyncHandler from "../utils/AsyncHandler.js";
 import { Listing } from "../models/listing.models.js";
 import ApiResponse from "../utils/ApiResponse.js";
+import { User } from "../models/user.models.js";
+
+
 const getUserListings = asyncHandler( async(req,res,next) =>{
    try {
      const user = req.user_id;
@@ -18,6 +21,19 @@ const getUserListings = asyncHandler( async(req,res,next) =>{
     catch (error) {
     next(error);
    }
-})
+});
+const getUser = asyncHandler(async(req, res, next) =>{
+  try {
+    const user = await User.findById(req.params.id);
+    if(!user) throw new ApiError(400, "User not found");
+    
+    const {password: pass, ...rest} = user._doc;
 
-export {getUserListings};
+    return res.status(200)
+    .json(new ApiResponse(200, rest, "User fetched Successfully"));
+  }
+  catch (error) {
+    next(error);
+  }
+})
+export {getUserListings,getUser};

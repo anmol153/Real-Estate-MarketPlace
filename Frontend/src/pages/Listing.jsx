@@ -7,14 +7,16 @@ import 'swiper/css/bundle'
 import 'ldrs/react/TailChase.css'
 import { TailChase } from 'ldrs/react'
 import { FaShare, FaMapMarkerAlt, FaBed, FaBath, FaParking, FaChair } from 'react-icons/fa'
-
+import { useSelector } from 'react-redux'
+import Contact from './Contact'
 function Listing() {
   const param = useParams()
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [copied, setCopied] = useState(false)
-
+  const currentUser = useSelector((state) => state.user.currentUser)
+  const [contact, setContact] = useState(false)
   SwiperCore.use([Navigation])
 
   useEffect(() => {
@@ -142,6 +144,12 @@ function Listing() {
             {data.furnished ? 'Furnished' : 'Unfurnished'}
           </li>
         </ul>
+        {currentUser && currentUser._id !== data.userRef && contact===false && (
+          <button onClick={()=>setContact(true)}className='bg-slate-700 text-white text-center p-3 rounded-lg uppercase hover:opacity-95'>
+            Contact Landlord
+          </button>
+        )}
+        {contact && <Contact listing={data} />}
       </div>
     </div>
   )
