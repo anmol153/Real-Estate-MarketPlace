@@ -32,6 +32,6 @@ app.use('/api/v1/listings', ListingRoutes);
 app.use(errorHandler);
 app.use('/uploads', express.static(path.join(_dirname, '/Frontend')));
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(_dirname, '/Frontend', 'index.html'));
+app.get('/:path(*)', (req, res) => {
+  res.sendFile(path.join(__dirname, '/Frontend', 'index.html'));
 });
