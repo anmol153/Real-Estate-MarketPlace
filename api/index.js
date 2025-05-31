@@ -30,8 +30,8 @@ app.use("/api/v1/user", UserRouter);
 app.use("/api/v1/auth", AuthRouter);
 app.use('/api/v1/listings', ListingRoutes);
 app.use(errorHandler);
-app.use('/uploads', express.static(path.join(_dirname, '/frontend/dist')));
+app.use('/uploads', express.static(path.join(_dirname, '/Frontend/dist')));
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(_dirname, '/frontend', 'dist', 'index.html'));
+  res.sendFile(path.join(_dirname, '/Frontend', 'dist', 'index.html'));
 });
