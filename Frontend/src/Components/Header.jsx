@@ -24,13 +24,13 @@ const Header = () => {
     if(search) setSearchTerm(search);
   },[location.search]);
 
-  
+
   return (
     <header className='bg-slate-200 shadow-md'>
         <div className='flex justify-between item-center  p-3' >
             <Link to="/" className='flex items-center gap-2'>
                 <h1 className="font-bold text-sm sm:text-xl flex flex-wrap ">
-                  <span className='text-slate-500 '>Sehand</span>
+                  <span className='text-slate-500 '>Real</span>
                   <span className='text-slate-700 '>Estate</span>
                 </h1>
             </Link>
