@@ -7,6 +7,8 @@ import errorHandler from './middleware/errorHandler.js';
 import cookieParser from 'cookie-parser';
 import { ListingRoutes } from './routes/listing.routes.js';
 import path from 'path';
+
+
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -30,8 +32,8 @@ app.use("/api/v1/user", UserRouter);
 app.use("/api/v1/auth", AuthRouter);
 app.use('/api/v1/listings', ListingRoutes);
 app.use(errorHandler);
-app.use('/uploads', express.static(path.join(_dirname, '/Frontend')));
+app.use('/uploads', express.static(path.join(_dirname, 'Frontend')));
 
-app.get('/:path(*)', (req, res) => {
-  res.sendFile(path.join(__dirname, '/Frontend', 'index.html'));
+app.get('', (req, res) => {
+  res.sendFile(path.join(_dirname, '/Frontend', 'index.html'));
 });
